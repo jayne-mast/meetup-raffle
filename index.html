@@ -1,0 +1,97 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>meetup raffle</title>
+    <script src="https://code.jquery.com/jquery-2.1.4.js"></script>
+
+    <style>
+        button {
+            background-color: #f47d31;
+            color: white;
+            border: 0;
+            border-radius: 10px;
+            font-family: helvetica,arial,sans-serif;
+            font-size: 40px;
+            padding: .2em .5em;
+            margin-top: 10px;
+        }
+        p {
+            font-size: 100px;
+            font-family: helvetica,arial,sans-serif;
+        }
+    </style>
+</head>
+<body>
+<center>
+    <button>STOP!!</button>
+    <p></p>
+</center>
+
+    <script>
+        //    var key = '183448363d5717036694eff60b32',
+        //        event_id = '225018140',
+        //        url = 'http://api.meetup.com/2/rsvps?key=' + key + '&sign=true&event_id=' + event_id;
+
+
+        var url = 'rsvps.json',
+                results = [],
+                totalResults,
+                interval,
+                running = false,
+                item = 0,
+                current;
+
+        function getRandomInt(min, max) {
+            return Math.floor(Math.random() * (max - min + 1) + min);
+        }
+
+        function start() {
+            running = true;
+            $('button').text('STOP!!');
+
+            interval = window.setInterval(function () {
+                current = getRandomInt(0, totalResults - 1);
+                $('p').text(results[current]);
+            }, 95);
+        }
+
+        function stop() {
+            running = false;
+            $('button').text('start');
+            window.clearInterval(interval);
+
+            if (results[current]) {
+                results.splice(current, 1);
+                totalResults--;
+            }
+        }
+
+
+
+        $.getJSON(url, function(data) {
+            var name;
+
+            for (var i = 0; i < data.results.length; i++) {
+                name = data.results[i].member.name;
+                if (name !== 'Paul Verbeek' && name !== 'Lia Mast' && name !== 'Lara Anabel' && name !==
+                        'Lewis Cowper' && name !== 'Robert Haritonov') {
+                    results.push(name);
+                }
+            }
+
+            totalResults = results.length;
+
+            start();
+        });
+
+        $('button').on('click', function () {
+            if (running) {
+                stop();
+            } else {
+                start();
+            }
+        });
+    </script>
+</body>
+</html>
